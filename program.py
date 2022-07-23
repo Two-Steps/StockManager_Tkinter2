@@ -7,6 +7,7 @@ import os.path as path
 import math
 from dataManagement import *
 import utilities as utils
+from productEdition import *
 
 class MyStockManage:
     def __init__(self):
@@ -271,7 +272,7 @@ class MyStockManage:
     # ACTION
     # - Add and Delete content
     def action_add_product(self):
-        print('Add Product')
+        self.action_edit_product(Product())
 
     def action_del_products(self):
         # create box message
@@ -287,8 +288,20 @@ class MyStockManage:
                 loadTotalPages=True
             )
 
+    def action_edit_product(self, product:Product):
+        
+        # Toplevel(master=self.window)
+        ProductEditor(master=self.window,
+            product=product,
+            callback_onAddEdit = self._callback_AddEditProduct
+            )
+
     # - Product content
     # -- product list
+
+    def _event_imageClicked(self, event, product:Product):
+            self.action_edit_product(product)
+
     def action_markForDelete(self, productId, variable: BooleanVar):
         # kiểm tra xem btn xóa có click hay k
         if variable.get():
@@ -302,7 +315,7 @@ class MyStockManage:
         else:
             self.g_frameAddDelete_btnDelProducts.configure(state=DISABLED)
 
-        print(self.productsToDelete)
+        # print(self.productsToDelete)
 
     def action_prev_page(self):
         
@@ -405,6 +418,10 @@ class MyStockManage:
             utils.loadImageToLabel(lblImage, imgPath, imgWidth, imgHeight)
         else:
             lblImage.configure(text='No Image')
+
+        lblImage.bind('<Button-3>',
+            lambda event, arg= product: self._event_imageClicked(event, arg)
+        )
         
 
     # def load name description
@@ -470,4 +487,17 @@ class MyStockManage:
         self.refresh_btnPrevPage()
         self.refresh_btnNextPage()
         self.refresh_lblCurrentPageOfN()
+
+    # def reload lại data khi sửa hoặc thêm mới
+    def _callback_AddEditProduct(self, product: Product):
+        
+        if product.id:
+            DataManager.updateProduct(product)
+            self.refresh_FrameProductsContent(loadTotalPages= False)
+        else:
+            DataManager.insertProduct(product)
+            lastPage = self.totalPage + 1
+            self.refresh_FrameProductsContent(loadTotalPages= True,
+                setCurrentPageTo= lastPage
+            )
 MyStockManage()

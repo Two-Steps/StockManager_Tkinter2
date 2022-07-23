@@ -1,3 +1,4 @@
+import uuid
 class Product:
 
     def __init__(self,
@@ -55,5 +56,18 @@ class DataManager:
         DataManager.MEM_DB = [
             x for x in DataManager.MEM_DB if x.id not in idList
         ]
+
+    def updateProduct(product: Product):
+
+        prod: Product
+        for pidx, prod in enumerate(DataManager.MEM_DB):
+            if prod.id == product.id:
+                DataManager.MEM_DB[pidx] = product
+                break
+
+    def insertProduct(product: Product):
+        
+        product.id = str(uuid.uuid1())
+        DataManager.MEM_DB.append(product)
 
 
