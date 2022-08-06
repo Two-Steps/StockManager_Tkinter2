@@ -4,7 +4,7 @@ from tkinter import ttk
 import os.path as path
 import tkinter.filedialog as filedialog
 
-from dataManagement import*
+from dataManagement2 import*
 import utilities as utils
 
 class ProductEditor(Toplevel):

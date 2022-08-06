@@ -1,3 +1,4 @@
+from os import remove
 import uuid
 class Product:
 
@@ -15,19 +16,41 @@ class Product:
         self.stockQuantity = stockQuantity
 
 class DataManager:
-    MEM_DB = [
-        Product(1, 'image\\apple.png', 'Apple', 'This is an apple', 12),
-        Product(2, 'image\kiwi.png', 'Kiwi', 'Nice fruit!', 120),
-        Product(3, 'image\luu.png', 'Luu', 'I love this', 400),
-        Product(4, 'image\mango.png', 'Mango', 'Eat eat eat', 5),
-        Product(5, 'image\_apple.png', 'Apple', 'This is an apple2', 635),
-        Product(6, 'image\kiwi.png', 'Kiwi', 'This is an kiwi', 54),
-        Product(7, 'image\luu.png', 'Luu', 'This is an luu', 9),
-        Product(8, 'image\mango.png', 'Mango', 'This is an mango', 120),
-        Product(9, 'image\kiwi.png', 'Kiwi', 'This is an kiwi2', 95),
-        Product(10, 'image\mango.png', 'Mango', 'This is an mango2', 248)
-    ]
+    f = open('data.txt', 'r', encoding='utf-8')
+    data = f.read()
+    data = data.split('\n')
+    # print(data)
+    for i in range(len(data)):
+        if data[i] != '':
+            if len(data[i]) < 20:
+                data[i-1] += data[i]
+                data[i] = ''
+    # print(data)
+    while '' in data:
+        data.remove('')
 
+    pro = []
+    MEM_DB = []
+    if len(data):
+        for i in range(len(data)):
+            pro = data[i].split(',')
+            # print(pro)
+            p = Product(pro[0],pro[1],pro[2],pro[3],int(pro[4]))
+            MEM_DB.append(p)
+    # print(MEM_DB[0].id)
+
+    # function to change data.txt if MEM_DB changed
+    def change_data(MEM_DB):
+        f = open('data.txt','w',encoding='utf-8')
+        pro = ''
+        prod: Product
+        for prod in MEM_DB:
+            pro = pro + str(prod.id) + ',' + prod.imgPath + ','\
+                + prod.name + ',' + prod.description + ',' + str(prod.stockQuantity) + '\n'
+            f.write(pro)
+            pro = ''
+        f.close()
+    
     def get(maxItemsPerPage, pageNumber, name: str, stockBelow: int):
 
         startInd = maxItemsPerPage * (pageNumber - 1)
@@ -52,10 +75,14 @@ class DataManager:
 
         return data
     
+    # need update to change file data.txt
     def deleteProducts(idList):
         DataManager.MEM_DB = [
             x for x in DataManager.MEM_DB if x.id not in idList
         ]
+
+        DataManager.change_data(DataManager.MEM_DB)
+
 
     def updateProduct(product: Product):
 
@@ -65,9 +92,17 @@ class DataManager:
                 DataManager.MEM_DB[pidx] = product
                 break
 
+        DataManager.change_data(DataManager.MEM_DB)
+
     def insertProduct(product: Product):
         
         product.id = str(uuid.uuid1())
         DataManager.MEM_DB.append(product)
+
+        DataManager.change_data(DataManager.MEM_DB)
+
+
+DataManager()
+
 
 

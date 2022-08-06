@@ -5,7 +5,7 @@ from tkinter.font import Font
 from tkinter import messagebox
 import os.path as path
 import math
-from dataManagement import *
+from dataManagement2 import *
 import utilities as utils
 from productEdition import *
 
@@ -57,7 +57,7 @@ class MyStockManage:
         # end def init
     # DEFINE GLOBAL VARIABLES
     def defineGlobalVar(self):
-        self.spinboxSearchVar = 25
+        self.spinboxSearchVar = 300
         self.spinboxSearchMin = 5
         self.spinboxSearchMax = 3000
         self.maxItemPerPage = 4
@@ -446,7 +446,7 @@ class MyStockManage:
         frameDesc.pack()
         lblName = Label(master=frameName,
             text=product.name,
-            font=self.fontTime
+            font=self.fontTimeBold
         )
         lblDesc = Label(master=frameDesc,
             text=product.description,
